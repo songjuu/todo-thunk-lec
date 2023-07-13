@@ -1,0 +1,38 @@
+{
+  "todos": [
+    {
+      "id": 1,
+      "title": "test title1",
+      "contents": "test contents1",
+      "isDone": false
+    },
+    {
+      "id": 2,
+      "title": "test title2",
+      "contents": "test contents2",
+      "isDone": false
+    },
+    {
+      "id": 3,
+      "title": "test title3",
+      "contents": "test contents3",
+      "isDone": false
+    }
+  ],
+  "users": [
+    {
+      "id": 1,
+      "email": "test@gmail.com",
+      "name": "홍길동",
+      "sex": "male",
+      "phone": "010-111-2222"
+    },
+    {
+      "id": 2,
+      "email": "test2@gmail.com",
+      "name": "홍길순",
+      "sex": "female",
+      "phone": "010-222-3333"
+    }
+  ]
+}

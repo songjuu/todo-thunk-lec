@@ -1,23 +1,31 @@
-import logo from './logo.svg';
-import './App.css';
+import axios from "axios";
+import React, { useEffect } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { __getTodos } from "./redux/modules/todosSlice12";
 
 function App() {
+  const dispatch = useDispatch();
+  const { isLoading, error, todos } = useSelector((state) => state.todos);
+  // console.log("todos=>>>", todos);
+
+  useEffect(() => {
+    dispatch(__getTodos());
+  }, []);
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
+    <div>
+      {todos.map((todo) => (
+        <div
+          style={{ margin: "10px", border: "1px solid black" }}
+          key={todo.id}
         >
-          Learn React
-        </a>
-      </header>
+          {todo.title}
+          <br />
+          {todo.contents}
+          <br />
+          {todo.isDone.toString()}
+        </div>
+      ))}
     </div>
   );
 }
