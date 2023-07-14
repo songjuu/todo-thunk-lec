@@ -14,7 +14,7 @@ export const __getTodos = createAsyncThunk(
   async (payload, thunkAPI) => {
     try {
       //시도! data fetch
-      const data = await axios.get("http://localhost:4001/todos");
+      const data = await axios.get("http://localhost:4000/todos");
 
       //성공한 경우
       return thunkAPI.fulfillWithValue(data.data);
@@ -32,7 +32,7 @@ export const __addTodos = createAsyncThunk(
   //dispatch에서 받아온 객체 추가해서 넣어줘야함
   async (newTodo, thunkAPI) => {
     try {
-      const data = await axios.post("http://localhost:4001/todos", newTodo);
+      const data = await axios.post("http://localhost:4000/todos", newTodo);
       return thunkAPI.fulfillWithValue(data.data);
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
@@ -45,8 +45,12 @@ export const __switchTodos = createAsyncThunk(
   "todos/switchTodos",
   async (payload, thunkAPI) => {
     try {
-      //payload 할 일의 id
-      const data = await axios.patch(`http://localhost:4001/todos/${payload}`);
+      //payload
+      const todo = payload;
+      console.log(todo);
+      const data = await axios.patch(`http://localhost:4000/todos/${todo.id}`, {
+        isDone: !todo.isDone,
+      });
       return thunkAPI.fulfillWithValue(data.data);
     } catch (error) {
       return thunkAPI.rejectWithValue(error);
@@ -62,37 +66,46 @@ const todosSlice = createSlice({
     //pending(데이터를 가지고 오는중)
     //fullfield(데이터를 가져오는 것 완료)
     //rejected(데이터 가져오는 것 실패)
-    [__getTodos.pending]: (state, aciton) => {
+    [__getTodos.pending]: (state, action) => {
       state.isLoading = true;
     },
-    [__getTodos.fulfilled]: (state, aciton) => {
+    [__getTodos.fulfilled]: (state, action) => {
       state.isLoading = false;
-      state.todos = aciton.payload;
+      state.todos = action.payload;
     },
     [__getTodos.rejected]: (state, action) => {
       state.isLoading = true;
       state.isError = true;
       state.error = action.payload;
     },
-    [__addTodos.pending]: (state, aciton) => {
+    [__addTodos.pending]: (state, action) => {
       state.isLoading = true;
     },
-    [__addTodos.fulfilled]: (state, aciton) => {
+    [__addTodos.fulfilled]: (state, action) => {
       state.isLoading = false;
-      state.todos = [...state, aciton.payload];
+      // state.todos = state.todos.push(action.paylod);
+      // console.log("action.payload", action.payload);
+      // state.todos.push(action.paylod);
+      state.todos = [...state.todos, action.payload];
     },
     [__addTodos.rejected]: (state, action) => {
       state.isLoading = true;
       state.isError = true;
       state.error = action.payload;
     },
-    [__switchTodos.pending]: (state, aciton) => {
+    [__switchTodos.pending]: (state, action) => {
       state.isLoading = true;
     },
-    [__switchTodos.fulfilled]: (state, aciton) => {
+    [__switchTodos.fulfilled]: (state, action) => {
       state.isLoading = false;
       //todos 수정할 거 넣어서 묶어주기
-      // state.todos =
+      state.todos.map((todo) => {
+        if (todo.id === action.payload.id) {
+          return { ...todo, isDone: action.payload.isDone };
+        } else {
+          return todo;
+        }
+      });
     },
     [__switchTodos.rejected]: (state, action) => {
       state.isLoading = true;
