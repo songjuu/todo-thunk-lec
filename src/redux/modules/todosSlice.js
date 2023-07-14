@@ -40,6 +40,21 @@ export const __addTodos = createAsyncThunk(
   }
 );
 
+//delete(삭제)
+export const __deleteTodos = createAsyncThunk(
+  "todos/deleteTodos",
+
+  async (payload, thunkAPI) => {
+    try {
+      const data = await axios.delete(`http://localhost:4000/todos/${payload}`);
+      console.log("data~~~!!!", data); //삭제 되니까 빈 객체가 맞고
+      return thunkAPI.fulfillWithValue(payload);
+    } catch (error) {
+      return thunkAPI.rejectWithValue(error);
+    }
+  }
+);
+
 // switch(수정)
 export const __switchTodos = createAsyncThunk(
   "todos/switchTodos",
@@ -83,12 +98,25 @@ const todosSlice = createSlice({
     },
     [__addTodos.fulfilled]: (state, action) => {
       state.isLoading = false;
-      // state.todos = state.todos.push(action.paylod);
+      // state.todos = state.todos.push(action.paylod); //숫자로 나오게됨 왜냐 push는 배열의 새로운 길이 반환
       // console.log("action.payload", action.payload);
       // state.todos.push(action.paylod);
       state.todos = [...state.todos, action.payload];
     },
     [__addTodos.rejected]: (state, action) => {
+      state.isLoading = true;
+      state.isError = true;
+      state.error = action.payload;
+    },
+    [__deleteTodos.pending]: (state, action) => {
+      state.isLoading = true;
+    },
+    [__deleteTodos.fulfilled]: (state, action) => {
+      state.isLoading = false;
+      // console.log("action payload ID=>>", action.payload);
+      state.todos = state.todos.filter((todo) => todo.id !== action.payload);
+    },
+    [__deleteTodos.rejected]: (state, action) => {
       state.isLoading = true;
       state.isError = true;
       state.error = action.payload;
@@ -99,13 +127,14 @@ const todosSlice = createSlice({
     [__switchTodos.fulfilled]: (state, action) => {
       state.isLoading = false;
       //todos 수정할 거 넣어서 묶어주기
-      state.todos.map((todo) => {
+      state.todos = state.todos.map((todo) => {
         if (todo.id === action.payload.id) {
           return { ...todo, isDone: action.payload.isDone };
         } else {
           return todo;
         }
       });
+      state.isError = false;
     },
     [__switchTodos.rejected]: (state, action) => {
       state.isLoading = true;

@@ -3,6 +3,7 @@ import React, { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import {
   __addTodos,
+  __deleteTodos,
   __getTodos,
   __switchTodos,
 } from "./redux/modules/todosSlice";
@@ -56,6 +57,9 @@ function App() {
             <br />
             {todo.isDone.toString()}
             <div>
+              <button onClick={() => dispatch(__deleteTodos(todo.id))}>
+                삭제
+              </button>
               <button onClick={() => dispatch(__switchTodos(todo))}>
                 완료 상태 변경
               </button>
